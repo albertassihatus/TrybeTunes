@@ -1,9 +1,14 @@
 import React from 'react';
+import Header from '../components/Header';
+import ProfileEdit from './ProfileEdit';
 
 class Profile extends React.Component {
   render() {
     return (
-      <h1 data-testid="page-profile">Olá sou o Profile</h1>
+      <div data-testid="page-profile">
+        <ProfileEdit />
+        <Header />
+      </div>
     );
   }
 }
