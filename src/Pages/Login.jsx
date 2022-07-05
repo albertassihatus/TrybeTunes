@@ -13,15 +13,15 @@ class Login extends React.Component {
     };
   }
 
-      onSaveButton = async () => {
-        const { name } = this.state;
-        this.setState({ loading: true });
-        await createUser({ name }).then((e) => {
-          if (e) {
-            this.setState({ next: true });
-          }
-        });
+  onSaveButton = async () => {
+    const { name } = this.state;
+    this.setState({ loading: true });
+    await createUser({ name }).then((e) => {
+      if (e) {
+        this.setState({ next: true });
       }
+    });
+  }
 
   onInputChange = ({ target }) => {
     const { value } = target;
