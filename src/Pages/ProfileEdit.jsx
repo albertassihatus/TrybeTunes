@@ -5,8 +5,9 @@ class ProfileEdit extends React.Component {
   render() {
     return (
       <>
-        <Header />
         <div data-testid="page-profile-edit" />
+        <Header />
+        <h1>Edit Profile</h1>
       </>
 
     );
