@@ -1,38 +1,52 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 class Search extends React.Component {
   constructor() {
     super();
     this.state = {
-      name: '',
-      // loading: false,
-      // next: false,
+      input: '',
+      loading: false,
+      search: '',
+      results: [],
     };
   }
 
-  onSaveButton = async () => {
-    // const { name } = this.state;
-    // this.setState({ loading: true });
-    // await createUser({ name }).then((e) => {
-    //   if (e) {
-    //     this.setState({ next: true });
-    //   }
-    // });
-  }
+  onSaveButton = () => {
+    const { input } = this.state;
+    this.setState(
+      {
+        loading: true,
+        search: input,
+        input: '',
+      },
+      async () => {
+        const { search } = this.state;
+        this.setState({
+          results: await searchAlbumsAPI(search),
+        });
+        this.setState({
+          loading: false,
+        });
+      },
+    );
+  };
 
   onInputChange = ({ target }) => {
     const { value } = target;
     this.setState({
-      name: value,
+      input: value,
     });
   }
 
   validateForm = () => {
-    const { name } = this.state;
+    const { input } = this.state;
 
     const minLength = 2;
-    const anyInfo = name.length >= minLength;
+    const anyInfo = input.length >= minLength;
 
     if (anyInfo) {
       return false;
@@ -41,29 +55,23 @@ class Search extends React.Component {
   }
 
   render() {
-    const { name } = this.state;
+    const { input, loading, results, search } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
         <main>
-
-          {/* {loading && <Loading />}
-          {next && <Redirect to="/search" />} */}
-
           <form>
-            <label htmlFor="name">
-              <input
-                data-testid="search-artist-input"
-                type="text"
-                name="name"
-                id="name"
-                value={ name }
-                onChange={ this.onInputChange }
-                placeholder="Artist"
-              />
-            </label>
+            <input
+              data-testid="search-artist-input"
+              type="text"
+              name="name"
+              id="name"
+              value={ input }
+              onChange={ this.onInputChange }
+              placeholder="Artist"
+            />
             <br />
-            <p />
+            <br />
             <button
               type="button"
               data-testid="search-artist-button"
@@ -75,8 +83,34 @@ class Search extends React.Component {
 
             </button>
           </form>
+
+          <br />
+
+          {(results.length === 0 && search) && 'Nenhum álbum foi encontrado'}
+          {loading && <Loading />}
+          {(search && results.length !== 0) && (
+            <p>{`Resultado de álbuns de: ${search}`}</p>
+          )}
+          <div>
+            {
+              results.map((e, index) => (
+                <div key={ index }>
+                  <h4>{e.collectionName}</h4>
+                  <p>{e.artistName}</p>
+                  <img src={ e.artworkUrl100 } alt={ e.collectionName } />
+                  <Link
+                    data-testid={ `link-to-album-${e.collectionId}` }
+                    to={ `/album/${e.collectionId}` }
+                  >
+                    <p>Album</p>
+                  </Link>
+                </div>
+              ))
+            }
+          </div>
         </main>
       </div>
+
     );
   }
 }
