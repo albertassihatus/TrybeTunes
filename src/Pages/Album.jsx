@@ -2,44 +2,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
-import getMusics from '../services/musicsAPI';
 
 class Album extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      album: {},
-      musicList: [],
+      id: props.match.params.id,
     };
   }
 
-  async componentDidMount() {
-    const { match } = this.props;
-    const { id } = match.params;
-    const musics = await getMusics(id);
-    const [album, ...musicList] = musics;
-    this.setState({
-      musicList,
-      album,
-    });
-  }
-
   render() {
-    const { musicList, album } = this.state;
+    const { id } = this.state;
     return (
       <div data-testid="page-album">
+        <h2>Album</h2>
         <Header />
-        <div>
-          <p data-testid="artist-name">
-            { album.artistName }
-          </p>
-          <p data-testid="album-name">
-            { album.collectionName }
-          </p>
-        </div>
         <MusicCard
-          music={ musicList }
-
+          propsId={ id }
         />
       </div>
     );
@@ -52,6 +31,7 @@ Album.propTypes = {
       id: PropTypes.string,
     }),
   }).isRequired,
+
 };
 
 export default Album;
